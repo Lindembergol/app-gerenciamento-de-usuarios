@@ -17,12 +17,57 @@ class UserController{
 
             //Cancela o comportamento padrao do evento
             event.preventDefault();
-    
-            this.addLine(this.getValues());
+
+            let values = this.getValues();
+
+            this.getPhoto((content)=>{
+
+                //O atributo photo recebe uma url da img
+                values.photo = content;
+
+                this.addLine(values);
+
+            });
         
         });
 
+
+
     }//fechando o metodo onSubmit()
+
+    getPhoto(callback){
+
+        let fileReader = new FileReader();
+
+        /**
+         * filter() - Filtrando o array de elementos, com base numa condição e retornando apenas o elemento photo
+         * Retorna um novo arrays apenas com os dados filtrados.
+         */
+        let elements = [...this.formEl.elements].filter(item => {
+
+            if (item.name === 'photo'){
+
+                return item;
+
+            }
+
+        })
+
+        //index 0, para pegar somente o elemento e files[0](pega a tag em si) para pegar apenas um unico arquivo
+        let file = elements[0].files[0];
+
+        //onload - quando essa foto terminar de carregar a img, execute essa função
+        //Função de callback
+        fileReader.onload = () => {
+
+            //Vou ter o conteudo do arquivo, no caso vem como url (base64)
+            callback(fileReader.result);
+
+        };
+
+        fileReader.readAsDataURL(file);
+
+    }//Fechamento do metodo getPhoto
 
     /**
      * Metodo para pegar todos os elementos do formulario e percorrer o mesmo,
@@ -69,7 +114,7 @@ class UserController{
         //Templat String ou crase - serve para delimitar o texto
         this.tableEl.innerHTML = `
             <tr>
-                <td><img src="dist/img/user1-128x128.jpg" alt="User Image" class="img-circle img-sm"></td>
+                <td><img src="${dataUser.photo}" alt="User Image" class="img-circle img-sm"></td>
                 <td>${dataUser.name}</td>
                 <td>${dataUser.email}</td>
                 <td>${dataUser.admin}</td>
@@ -84,3 +129,5 @@ class UserController{
     }//fechando o metodo addLine()
 
 }//Fechando a classe UserController
+
+//FileReader - Api nativa no js, útil para ler e manipular arquivos ou pastas
