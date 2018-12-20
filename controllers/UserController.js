@@ -24,12 +24,18 @@ class UserController{
 
     }//fechando o metodo onSubmit()
 
+    /**
+     * Metodo para pegar todos os elementos do formulario e percorrer o mesmo,
+     * cria e retorna um objeto User.
+     * Spread ou ... - Expressão esperando múltiplos parâmetros (transforma uma 
+     * Coleção Html em um array).
+     */
     getValues(){
 
         let user = {};
 
         //Percorrendo os elementos do formulario e armazenando no objeto Json
-        this.formEl.elements.forEach(function(field, index){
+        [...this.formEl.elements].forEach(function(field, index){
 
             if (field.name == 'gender') {
         
