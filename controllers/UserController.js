@@ -20,14 +20,19 @@ class UserController{
 
             let values = this.getValues();
 
-            this.getPhoto((content)=>{
+            this.getPhoto().then(
+                (content)=>{
 
-                //O atributo photo recebe uma url da img
-                values.photo = content;
+                    values.photo = content;
 
-                this.addLine(values);
+                    this.addLine(values);
 
-            });
+                }, 
+                (e)=>{
+                    console.error(e);
+                }   
+
+            );
         
         });
 
@@ -35,37 +40,53 @@ class UserController{
 
     }//fechando o metodo onSubmit()
 
-    getPhoto(callback){
+    getPhoto(){
 
-        let fileReader = new FileReader();
+        //Promise - É uma intenção, uma promessa. Executa uma ação assíncrona. 
+        return new Promise((resolve, reject) => {
 
-        /**
-         * filter() - Filtrando o array de elementos, com base numa condição e retornando apenas o elemento photo
-         * Retorna um novo arrays apenas com os dados filtrados.
-         */
-        let elements = [...this.formEl.elements].filter(item => {
+            //FileReader - Api nativa no js, útil para ler e manipular arquivos ou pastas
+            //Sincrono - Toda ação entre site e usuario ocorre em sincronia
+            //Assíncorno - Atividades e recursos do site não depedem da ação do usuario
+            
+            let fileReader = new FileReader();
 
-            if (item.name === 'photo'){
+            /**
+             * filter() - Filtrando o array de elementos, com base numa condição e retornando apenas o elemento photo
+             * Retorna um novo arrays apenas com os dados filtrados.
+             */
+            let elements = [...this.formEl.elements].filter(item => {
 
-                return item;
+                if (item.name === 'photo'){
 
-            }
+                    return item;
 
-        })
+                }
 
-        //index 0, para pegar somente o elemento e files[0](pega a tag em si) para pegar apenas um unico arquivo
-        let file = elements[0].files[0];
+            })
 
-        //onload - quando essa foto terminar de carregar a img, execute essa função
-        //Função de callback
-        fileReader.onload = () => {
+            //index 0, para pegar somente o elemento e files[0](pega a tag em si) para pegar apenas um unico arquivo
+            let file = elements[0].files[0];
 
-            //Vou ter o conteudo do arquivo, no caso vem como url (base64)
-            callback(fileReader.result);
+            //onload - quando essa foto terminar de carregar a img, execute essa função
+            //Função de callback
+            fileReader.onload = () => {
 
-        };
+                //Vou ter o conteudo do arquivo, no caso vem como url (base64)
+                //resolve - Parametro para quando a promessa é executada com sucesso
+                resolve(fileReader.result);
 
-        fileReader.readAsDataURL(file);
+            };
+
+            fileReader.onerror = (e) => {
+
+                //resolve - Parametro para quando a promessa retorna algum erro
+                reject(e);
+
+            };
+
+            fileReader.readAsDataURL(file);
+        });
 
     }//Fechamento do metodo getPhoto
 
@@ -129,5 +150,3 @@ class UserController{
     }//fechando o metodo addLine()
 
 }//Fechando a classe UserController
-
-//FileReader - Api nativa no js, útil para ler e manipular arquivos ou pastas
