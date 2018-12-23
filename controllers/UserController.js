@@ -25,6 +25,8 @@ class UserController{
 
             let values = this.getValues();
 
+            if (!values) return false;
+
             this.getPhoto().then(
                 (content)=>{
 
@@ -170,6 +172,14 @@ class UserController{
     addLine(dataUser){
 
         let tr = document.createElement('tr');
+
+        /**
+         * dataset só guarda string
+         * JSON.stringify(dataUser) - Converter o objeto para string Json
+         * Serializar - transformar um objeto em texto, sem perder as informações
+        */
+        tr.dataset.user = JSON.stringify(dataUser);
+
         tr.innerHTML= `
             <td><img src="${dataUser.photo}" alt="User Image" class="img-circle img-sm"></td>
             <td>${dataUser.name}</td>
@@ -186,7 +196,31 @@ class UserController{
         //Templat String ou crase - serve para delimitar o texto
         //appendChild - Permite adicionar código html, como elemento filho do elemento atual
         this.tableEl.appendChild(tr); 
+
+        this.updateCount();
         
     }//fechando o metodo addLine()
+
+    updateCount(){
+
+        let numberUsers = 0;
+        let numberAdmin = 0;
+
+        //this.tableEl.children - é uma coleção html, pra percorrer é preciso converter em arrays
+        [...this.tableEl.children].forEach(tr => {
+
+            numberUsers++;
+
+            //JSON.parse(tr.dataset.user) - onverter string Json para um objeto
+            let user = JSON.parse(tr.dataset.user);
+
+            if (user._admin) numberAdmin++;
+
+        });
+
+        document.querySelector('#number-users').innerHTML = numberUsers;
+        document.querySelector('#number-users-admin').innerHTML = numberAdmin;
+
+    }
 
 }//Fechando a classe UserController
