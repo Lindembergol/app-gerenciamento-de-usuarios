@@ -116,9 +116,19 @@ class UserController{
     getValues(){
 
         let user = {};
+        let isValid = true;
 
         //Percorrendo os elementos do formulario e armazenando no objeto Json
         [...this.formEl.elements].forEach(function(field, index){
+
+            //indexOf - Realiza uma busca dentro de array, se não encontrar retorna -1
+            if (['name', 'email', 'password'].indexOf(field.name) > -1 && !field.value) {
+
+                field.parentElement.classList.add('has-error');
+                isValid = false;
+                //return false; //Para não executar
+
+            }
 
             if (field.name == 'gender') {
         
@@ -138,6 +148,10 @@ class UserController{
             }
         
         });
+
+        if (!isValid){
+            return false;
+        }
     
         //Instanciando e retornando um objeto da classe User
         return new User(
