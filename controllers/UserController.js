@@ -7,6 +7,18 @@ class UserController{
         this.tableEl = document.getElementById(tableId);
 
         this.onSubmit();
+        this.onEdit();
+
+    }
+
+    //Cancelar edição de usuários
+    onEdit(){
+
+        document.querySelector('#box-user-update .btn-cancel').addEventListener('click', e => {
+
+            this.showPanelCreate();
+
+        })
 
     }
 
@@ -187,11 +199,19 @@ class UserController{
             <td>${(dataUser.admin) ? 'Sim' : 'Não'}</td>
             <td>${Utils.dateFormat(dataUser.register)}</td>
             <td>
-                <button type="button" class="btn btn-primary btn-xs btn-flat">Editar</button>
+                <button type="button" class="btn btn-primary btn-edit btn-xs btn-flat">Editar</button>
                 <button type="button" class="btn btn-danger btn-xs btn-flat">Excluir</button>
             </td>
         
         `;
+
+        //Editando Usuário
+        tr.querySelector('.btn-edit').addEventListener('click', e => {
+
+            console.log(JSON.parse(tr.dataset.user));
+            this.showPanelUpdate();
+
+        });
 
         //Templat String ou crase - serve para delimitar o texto
         //appendChild - Permite adicionar código html, como elemento filho do elemento atual
@@ -200,6 +220,20 @@ class UserController{
         this.updateCount();
         
     }//fechando o metodo addLine()
+
+    showPanelCreate(){
+
+        document.querySelector('#box-user-update').style.display = 'none';
+        document.querySelector('#box-user-create').style.display = 'block';
+
+    }
+
+    showPanelUpdate(){
+
+        document.querySelector('#box-user-create').style.display = 'none';
+        document.querySelector('#box-user-update').style.display = 'block';
+
+    }
 
     updateCount(){
 
@@ -211,7 +245,7 @@ class UserController{
 
             numberUsers++;
 
-            //JSON.parse(tr.dataset.user) - onverter string Json para um objeto
+            //JSON.parse(tr.dataset.user) - converter string Json para um objeto
             let user = JSON.parse(tr.dataset.user);
 
             if (user._admin) numberAdmin++;
